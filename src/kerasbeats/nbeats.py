@@ -94,10 +94,10 @@ class TrendBlock(keras.layers.Layer):
                                                   activation = None)
         # taken from equation (2) in paper
         self.forecast_time   = K.concatenate([K.pow(K.arange(horizon, 
-                                                             dtype = 'float') / horizon, i)[None, :]
+                                                             dtype = 'float32') / horizon, i)[None, :]
                                  for i in range(self.polynomial_size)], axis = 0)
         self.backcast_time   = K.concatenate([K.pow(K.arange(self.backcast_size, 
-                                                             dtype = 'float') / self.backcast_size, i)[None, :]
+                                                             dtype = 'float32') / self.backcast_size, i)[None, :]
                                  for i in range(self.polynomial_size)], axis = 0)
     
     def call(self, inputs):
@@ -143,11 +143,11 @@ class SeasonalBlock(keras.layers.Layer):
         self.theta         = keras.layers.Dense(self.theta_size, 
                                                 use_bias = False, 
                                                 activation = None)
-        self.frequency     = K.concatenate((K.zeros(1, dtype = 'float'), 
+        self.frequency     = K.concatenate((K.zeros(1, dtype = 'float32'), 
                              K.arange(num_harmonics, num_harmonics / 2 * horizon) / num_harmonics), 
                              axis = 0)
 
-        self.backcast_grid = -2 * np.pi * (K.arange(self.backcast_size, dtype = 'float')[:, None] / self.backcast_size) * self.frequency
+        self.backcast_grid = -2 * np.pi * (K.arange(self.backcast_size, dtype = 'float32')[:, None] / self.backcast_size) * self.frequency
 
         self.forecast_grid = 2 * np.pi * (K.arange(horizon, dtype=np.float32)[:, None] / horizon) * self.frequency
 
@@ -365,7 +365,7 @@ class NBeatsModel():
         :returns: self
         
         """
-        inputs     = keras.layers.Input(shape = (self.horizon * self.lookback, ), dtype = 'float')
+        inputs     = keras.layers.Input(shape = (self.horizon * self.lookback, ), dtype = 'float32')
         forecasts  = self.model_layer(inputs)
         self.model = Model(inputs, forecasts)
         return self
